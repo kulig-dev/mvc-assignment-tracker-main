@@ -1,3 +1,6 @@
+<?php
+// app/src/models/CourseDB.php
+
 /**
  * CourseDB class represents the data access layer for courses.
  */
@@ -31,7 +34,7 @@ class CourseDB {
      * @return string|null The course name or null if not found.
      * @throws Exception If there is an error during database query execution.
      */
-    public function getCourseNameByID($courseID) {
+    public function getCourseName($courseID) {
         try {
             if (!$courseID) {
                 return "All Courses";

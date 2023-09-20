@@ -1,4 +1,6 @@
 <?php
+// app/config/config_db.php
+
 /**
  * Database configuration settings.
  *

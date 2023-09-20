@@ -1,4 +1,6 @@
 <?php
+// setup_db.php
+
 /**
  * Database setup script.
  *

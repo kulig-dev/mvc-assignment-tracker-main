@@ -1,4 +1,6 @@
 <?php
+// app/config/db_handler.php
+
 require_once 'config_db.php';
 
 try {

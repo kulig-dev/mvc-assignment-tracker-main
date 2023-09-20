@@ -1,3 +1,6 @@
+<?php
+// app/src/AssignmentDB.php
+
 /**
  * AssignmentDB class represents the data access layer for assignments.
  */
