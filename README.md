@@ -4,6 +4,7 @@ This is a `README.md` file for a PHP-based task and course tracking application.
 
 ## Table of Contents
 
+- [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
@@ -11,6 +12,18 @@ This is a `README.md` file for a PHP-based task and course tracking application.
 - [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
+- [Acknowledgements](#acknowledgements)
+
+## Introduction
+
+I decided to modify and expand the project described in the tutorial in the following ways:
+
+- Restructured the project by organizing controllers into a separate `controllers` folder.
+- Implemented routing to change the way controllers are invoked within the application.
+- Kept the original database structure and list of actions.
+- Made these modifications to gain a deeper understanding of the MVC pattern and the development of larger PHP applications.
+
+I hope that these enhancements will positively impact my PHP learning journey and help me master not only the fundamentals but also more complex programming challenges.
 
 ## Requirements
 
@@ -125,3 +138,12 @@ This project is licensed under the MIT License.
 ## Author
 
 Robert Kulig
+
+## Acknowledgements
+
+To write this project, I used the tutorial "Create a PHP Application | PHP MVC Project Tutorial". 
+This tutorial is available on the website (https://www.youtube.com/watch?v=Rkg731t47dc&t=2456s).
+The tutorial was incredibly helpful as it provided explanations and tips on implementing functionality and using the MVC pattern.
+
+Thanks to this tutorial, I was able to understand and implement task and course tracking features in my application.
+Many thanks for Dave Gray.
