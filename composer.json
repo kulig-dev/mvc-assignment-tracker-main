@@ -1,0 +1,19 @@
+{
+    "name": "newde/mvc-assignment-tracker",
+    "description": "\"An MVC-based assignment tracker application with routing system and base class.",
+    "type": "project",
+    "license": "mit",
+    "authors": [
+        {
+            "name": "kulig-dev",
+            "email": "robert.kulig@post.cz"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Newde\\MvcAssignmentTracker\\": "app/src/"
+        }
+    },
+    "require": {}
+}

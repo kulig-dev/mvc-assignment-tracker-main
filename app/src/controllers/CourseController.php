@@ -1,79 +1,66 @@
 <?php
-// app/src/controllers/CourseController.php
+namespace Newde\MvcAssignmentTracker\controllers;
 
-require_once '../models/CourseDB.php';
+// CourseController.php
 
-/**
- * Course Controller class handles HTTP requests related to courses.
- */
-class CourseController {
-    private $courseModel;
+use Newde\MvcAssignmentTracker\models\AssignmentDB;
+use Newde\MvcAssignmentTracker\models\CourseDB; // Dodaj import dla CourseDB, jeśli to konieczne
 
-    /**
-     * Constructor to initialize the model.
-     *
-     * @param PDO $db Database connection instance.
-     */
+class CourseController extends BaseController {
     public function __construct($db) {
-        $this->courseModel = new CourseDB($db);
+        parent::__construct($db);
     }
 
-    /**
-     * Retrieve and display a list of all courses.
-     */
-    public function getAllCourses() {
-        $courses = $this->courseModel->getAllCourses();
-        // Pass $courses to the view to display the list of courses
-        include '../views/courses_list.php';
-    }
-
-    /**
-     * Add a new course to the database and handle redirection.
-     *
-     * @param string $courseName The name of the new course.
-     */
-    public function addCourse($courseName) {
-        $result = $this->courseModel->addCourse($courseName);
-        if ($result) {
-            // Success: The course has been added
-            header("Location: .?action=list_courses");
-        } else {
-            // Error: Failed to add the course
-            $error = "Something went wrong, please try again later.";
-            include('../views/pages/error_page.php');
-            exit();
+    public function add($data) {
+        // Dostosuj ogólną logikę dodawania kursu do konkretnych potrzeb
+        if (isset($data['course_name'])) {
+            $course_name = $data['course_name'];
+            // Przykład: dodaj kurs do bazy danych
+            $this->addCourse($course_name);
         }
+        // Przekieruj na listę kursów po dodaniu
+        $this->list();
     }
 
-    /**
-     * Delete a course from the database and handle redirection.
-     *
-     * @param int $courseID The ID of the course to delete.
-     */
-    public function deleteCourse($courseID) {
-        if ($courseID) {
+    public function list() {
+        // Wykonaj ogólną logikę listowania kursów
+        $courses = $this->getCourses();
+        $this->renderView('course_list.php', ['courses' => $courses]);
+    }
+
+    public function delete($id) {
+        // Dostosuj ogólną logikę usuwania kursu do konkretnych potrzeb
+        if ($id) {
             try {
-                $result = $this->courseModel->deleteCourse($courseID);
-
-                if  ($result) {
-                    // Success: The course has been deleted
-                    $success = "Success: The course has been deleted.";
-                    include('../views/pages/success_page.php');
-                    exit();
-                } else {
-                    // Error: Failed to delete the course
-                    $error = "You cannot delete a course if assignments exist for it.";
-                    include('../views/pages/error_page.php');
-                    exit();
-                }
+                // Przykład: usuń kurs o danym ID z bazy danych
+                $this->deleteCourse($id);
             } catch (PDOException $e) {
-                // Handle exceptions if there are assignments associated with the course
-                $error = "You cannot delete a course if assignments exist for it.";
-                include('../views/pages/error_page.php');
-                exit();
+                // Obsłuż błąd usuwania, np. kurs ma przypisane zadania
+                $this->renderError('Cannot delete a course with assignments.');
             }
-            // Redirect to the list of courses
-            header("Location: .?action=list_courses");
         }
+        // Przekieruj na listę kursów po usunięciu
+        $this->list();
+    }
+
+    private function addCourse($courseName) {
+        // Przykład: dodaj kurs do bazy danych
+        // $this->db->insert('courses', ['course_name' => $courseName]);
+    }
+
+    private function getCourses() {
+        // Przykład: pobierz listę kursów z bazy danych
+        // return $this->db->selectAll('courses');
+        return []; // Zwróć pustą listę na potrzeby testów
+    }
+
+    private function deleteCourse($id) {
+        // Przykład: usuń kurs o danym ID z bazy danych
+        // $this->db->delete('courses', ['id' => $id]);
+    }
+
+    private function renderError($message) {
+        // Metoda pomocnicza do renderowania widoku błędu
+        $this->renderView('error.php', ['error' => $message]);
     }
 }

@@ -2,6 +2,7 @@
 
 This is a `README.md` file for a PHP-based task and course tracking application. This application uses the MVC (Model-View-Controller) pattern to handle database operations and CRUD (Create, Read, Update, Delete) operations on courses and assignments.
 
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -14,6 +15,7 @@ This is a `README.md` file for a PHP-based task and course tracking application.
 - [Author](#author)
 - [Acknowledgements](#acknowledgements)
 
+
 ## Introduction
 
 I decided to modify and expand the project described in the tutorial in the following ways:
@@ -25,11 +27,13 @@ I decided to modify and expand the project described in the tutorial in the foll
 
 I hope that these enhancements will positively impact my PHP learning journey and help me master not only the fundamentals but also more complex programming challenges.
 
+
 ## Requirements
 
 - PHP 7.0 or higher
 - Web server (e.g., Apache, Nginx) with PHP support
 - MySQL database
+
 
 ## Installation
 
@@ -87,6 +91,7 @@ try {
     php setup_db.php
 ```
 
+
 ## Project Structure
 
 ```markdown
@@ -138,6 +143,7 @@ This project is licensed under the MIT License.
 ## Author
 
 Robert Kulig
+
 
 ## Acknowledgements
 

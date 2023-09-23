@@ -10,7 +10,7 @@
  * @author Robert Kulig
  */
 
-require_once('app/config/config_db.php');
+ require_once __DIR__ . '/config/config_db.php';
 
 try {
     // Connect to the database server

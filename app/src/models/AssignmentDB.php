@@ -1,29 +1,66 @@
 <?php
-// app/src/AssignmentDB.php
+namespace Newde\MvcAssignmentTracker\models;
+
+use \PDO;
 
 /**
- * AssignmentDB class represents the data access layer for assignments.
+ * AssignmentModel class represents the data access layer for assignments.
  */
-class AssignmentDB {
-    private $db;
+class AssignmentDB extends BaseModel {
 
     public function __construct($db) {
-        $this->db = $db;
+        parent::__construct($db);
     }
 
     /**
-     * Get assignments by course ID.
+     * Get all assignments.
      *
-     * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
      * @return array An array of assignment data.
-     * @throws Exception If there is an error during database query execution.
+     * @throws \Exception If there is an error during database query execution.
      */
+    public function getAllAssignments() {
+        try {
+            $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID ORDER BY C.courseID";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \Exception("Error fetching assignments: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get an assignment by its ID.
+     *
+     * @param int $assignmentID The ID of the assignment.
+     * @return array|null An associative array representing the assignment, or null if not found.
+     * @throws \Exception If there is an error during database query execution.
+     */
+    public function getAssignmentByID($assignmentID) {
+        try {
+            $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID WHERE A.ID = :assignmentID";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':assignmentID', $assignmentID, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \Exception("Error fetching assignment by ID: " . $e->getMessage());
+        }
+    }
+
+    /**
+ * Get assignments by course ID.
+ *
+ * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
+ * @return array An array of assignment data.
+ * @throws \Exception If there is an error during database query execution.
+ */
     public function getAssignmentsByCourse($courseID) {
         try {
             if ($courseID) {
-                $query = "SELECT A.ID, A.Description, C.courseID FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID WHERE A.courseID = :courseID ORDER BY A.ID";
+                $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID WHERE A.courseID = :courseID ORDER BY A.ID";
             } else {
-                $query = "SELECT A.ID, A.Description, C.courseID FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID ORDER BY C.courseID";
+                $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID ORDER BY C.courseID";
             }
             $stmt = $this->db->prepare($query);
             if ($courseID) {
@@ -32,33 +69,8 @@ class AssignmentDB {
             $stmt->execute();
             $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $assignments;
-        } catch (PDOException $e) {
-            throw new Exception("Error fetching assignments: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Get the course ID associated with an assignment.
-     *
-     * @param int $assignmentID The ID of the assignment.
-     * @return int|null The course ID or null if not found.
-     * @throws Exception If there is an error during database query execution.
-     */
-    public function getCourseIDForAssignment($assignmentID) {
-        try {
-            $query = "SELECT courseID FROM assignments WHERE ID = :assignmentID";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':assignmentID', $assignmentID, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($result && isset($result['courseID'])) {
-                return $result['courseID'];
-            } else {
-                return null;
-            }
-        } catch (PDOException $e) {
-            throw new Exception("Error fetching course ID for assignment: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error fetching assignments by course ID: " . $e->getMessage());
         }
     }
 
@@ -68,7 +80,7 @@ class AssignmentDB {
      * @param string $description The description of the assignment.
      * @param int $courseID The ID of the course associated with the assignment.
      * @return bool True on success, false on failure.
-     * @throws Exception If there is an error during database query execution.
+     * @throws \Exception If there is an error during database query execution.
      */
     public function addAssignment($description, $courseID) {
         try {
@@ -77,28 +89,8 @@ class AssignmentDB {
             $stmt->bindParam(':description', $description);
             $stmt->bindParam(':courseID', $courseID, PDO::PARAM_INT);
             return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error adding assignment: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Edit an existing assignment.
-     *
-     * @param int $assignmentID The ID of the assignment to edit.
-     * @param string $newDescription The new description for the assignment.
-     * @return bool True on success, false on failure.
-     * @throws Exception If there is an error during database query execution.
-     */
-    public function editAssignment($assignmentID, $newDescription) {
-        try {
-            $query = "UPDATE assignments SET Description = :newDescription WHERE ID = :assignmentID";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':newDescription', $newDescription);
-            $stmt->bindParam(':assignmentID', $assignmentID, PDO::PARAM_INT);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error editing assignment: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error adding assignment: " . $e->getMessage());
         }
     }
 
@@ -107,7 +99,7 @@ class AssignmentDB {
      *
      * @param int $assignmentID The ID of the assignment to delete.
      * @return bool True on success, false on failure.
-     * @throws Exception If there is an error during database query execution.
+     * @throws \Exception If there is an error during database query execution.
      */
     public function deleteAssignment($assignmentID) {
         try {
@@ -115,8 +107,8 @@ class AssignmentDB {
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':assignmentID', $assignmentID, PDO::PARAM_INT);
             return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error deleting assignment: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error deleting assignment: " . $e->getMessage());
         }
     }
 }
