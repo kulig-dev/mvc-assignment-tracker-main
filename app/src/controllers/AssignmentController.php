@@ -1,63 +1,61 @@
 <?php
-// app/src/controllers/AssignmentController.php
+namespace Newde\MvcAssignmentTracker\controllers;
 
-require_once '../models/AssignmentDB.php';
-require_once '../models/CourseDB.php';
+use Newde\MvcAssignmentTracker\models\AssignmentDB;
+use Newde\MvcAssignmentTracker\models\CourseDB;
+
+require_once __DIR__ . '/../models/AssignmentDB.php';
+require_once __DIR__ . '/../models/CourseDB.php';
 
 /**
  * Assignment Controller class handles HTTP requests related to assignments.
  */
-class AssignmentController {
+class AssignmentController extends BaseController {
     private $assignmentModel;
     private $courseModel;
 
     /**
      * Constructor to initialize models.
      *
-     * @param PDO $db Database connection instance.
+     * @param \PDO $db Database connection instance.
      */
     public function __construct($db) {
-        $this->assignmentModel = new AssignmentDB($db);
-        $this->courseModel = new CourseDB($db);
+        parent::__construct($db);
+        $this->assignmentModel = new \Newde\MvcAssignmentTracker\models\AssignmentDB($db);
+        $this->courseModel = new \Newde\MvcAssignmentTracker\models\CourseDB($db);
     }
 
     /**
      * Retrieve assignments by course ID and display them.
      *
-     * @param int $courseID The ID of the course (or null to retrieve all assignments).
+     * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
      */
-    public function getAssignmentsByCourse($courseID) {
-        $result = $this->assignmentModel->getAssignmentsByCourse($courseID);
-        $courseName = $this->courseModel->getCourseName($courseID);
-        $courses = $this->courseModel->getAllCourses();
-        if ($result && $courseName && $courses) {
-            // Success: The course has been listed by name
-            include '../views/assignments_list.php';
-        } else {
-            // Error: Failed to list the course by name
-            $error = "Invalid assignment data. Check all fields and try again.";
-            include('../views/pages/error_page.php');
-            exit();
-        }
+    public function listAction() {
+        $courseID = filter_input(INPUT_GET, 'courseID', FILTER_VALIDATE_INT);
+        $assignments = $this->assignmentModel->getAssignmentsByCourse($courseID);
+        $this->renderView('assignment_list.php', ['assignments' => $assignments]);
     }
 
     /**
      * Add a new assignment to the database.
-     *
-     * @param string $description The description of the assignment.
-     * @param int $courseID The ID of the course associated with the assignment.
      */
-    public function addAssignment($description, $courseID) {
-        $result = $this->assignmentModel->addAssignment($description, $courseID);
-        if ($result) {
-            // Success: The assignment has been added
-            header("Location: .?courseID=$courseID");
-        } else {
-            // Error: Failed to add the assignment
-            $error = "Invalid assignment data. Check all fields and try again.";
-            include('../views/pages/error_page.php');
-            exit();
+    public function addAction($data) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $courseID = filter_input(INPUT_POST, 'courseID', FILTER_VALIDATE_INT);
+
+            if (!empty($description) && $courseID) {
+                $result = $this->assignmentModel->addAssignment($description, $courseID);
+                if ($result) {
+                    // Success: The assignment has been added
+                    header("Location: .?action=list&courseID=$courseID");
+                    exit();
+                }
+            }
         }
+        // Error: Invalid data or GET request
+        include('../views/pages/error_page.php');
+        exit();
     }
 
     /**
@@ -65,26 +63,19 @@ class AssignmentController {
      *
      * @param int $assignmentID The ID of the assignment to delete.
      */
-    public function deleteAssignment($assignmentID) {
-        $result = $this->assignmentModel->deleteAssignment($assignmentID);
-
-        // Check if there are other assignments for the same course
-        $courseID = $this->assignmentModel->getCourseIDForAssignment($assignmentID);
-        $otherAssignments = $this->assignmentModel->getAssignmentsByCourse($courseID);
-
-        if ($result) {
-            // Success: The assignment has been deleted
-            if (!empty($otherAssignments)) {
-                // There are other assignments for the same course
-                header("Location: .?action=list_assignments&courseID=$courseID");
-            } else {
-                // The course no longer has assignments
-                header("Location: .?action=list_assignments"); // Redirect to the general assignments list
+    public function deleteAction($id) {
+        $assignmentID = filter_input(INPUT_GET, 'assignmentID', FILTER_VALIDATE_INT);
+        if ($assignmentID) {
+            $courseID = $this->assignmentModel->getCourseIDForAssignment($assignmentID);
+            $result = $this->assignmentModel->deleteAssignment($assignmentID);
+            if ($result) {
+                // Success: The assignment has been deleted
+                header("Location: .?action=list&courseID=$courseID");
+                exit();
             }
-        } else {
-            // Error: Failed to delete the assignment
-            $error = "Missing or incorrect assignment ID.";
-            include('../views/pages/error_page.php');
         }
+        // Error: Invalid data or assignment not found
+        include('../views/pages/error_page.php');
+        exit();
     }
 }
