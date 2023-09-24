@@ -5,6 +5,7 @@ use \PDO;
 
 /**
  * AssignmentModel class represents the data access layer for assignments.
+ * AssignmentModel class represents the data access layer for assignments.
  */
 class AssignmentDB extends BaseModel {
 
@@ -49,12 +50,12 @@ class AssignmentDB extends BaseModel {
     }
 
     /**
- * Get assignments by course ID.
- *
- * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
- * @return array An array of assignment data.
- * @throws \PDOException If there is an error during database query execution.
- */
+     * Get assignments by course ID.
+     *
+     * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
+     * @return array An array of assignment data.
+     * @throws \PDOException If there is an error during database query execution.
+     */
     public function getAssignmentsByCourse($courseID) {
         try {
             if ($courseID) {

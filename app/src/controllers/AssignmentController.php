@@ -24,6 +24,7 @@ class AssignmentController extends BaseController {
         $this->assignmentModel = new \Newde\MvcAssignmentTracker\models\AssignmentDB($db);
         $this->courseModel = new \Newde\MvcAssignmentTracker\models\CourseDB($db);
     }
+    
 
     /**
      * Retrieve assignments by course ID and display them.
