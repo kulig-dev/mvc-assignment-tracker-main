@@ -5,6 +5,7 @@ use \PDO;
 
 /**
  * AssignmentModel class represents the data access layer for assignments.
+ * AssignmentModel class represents the data access layer for assignments.
  */
 class AssignmentDB extends BaseModel {
 
@@ -49,17 +50,19 @@ class AssignmentDB extends BaseModel {
     }
 
     /**
- * Get assignments by course ID.
- *
- * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
- * @return array An array of assignment data.
- * @throws \PDOException If there is an error during database query execution.
- */
+     * Get assignments by course ID.
+     *
+     * @param int|null $courseID The ID of the course (or null to retrieve all assignments).
+     * @return array An array of assignment data.
+     * @throws \PDOException If there is an error during database query execution.
+     */
     public function getAssignmentsByCourse($courseID) {
         try {
             if ($courseID) {
                 $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID WHERE A.courseID = :courseID ORDER BY A.ID";
+                $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID WHERE A.courseID = :courseID ORDER BY A.ID";
             } else {
+                $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID ORDER BY C.courseID";
                 $query = "SELECT A.ID, A.Description, C.courseName FROM assignments A LEFT JOIN courses C ON A.courseID = C.courseID ORDER BY C.courseID";
             }
             $stmt = $this->db->prepare($query);
@@ -116,6 +119,8 @@ class AssignmentDB extends BaseModel {
             return $stmt->execute();
         } catch (\PDOException $e) {
             throw new \Exception("Error adding assignment: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error adding assignment: " . $e->getMessage());
         }
     }
 
@@ -134,6 +139,5 @@ class AssignmentDB extends BaseModel {
             return $stmt->execute();
         } catch (\PDOException $e) {
             throw new \Exception("Error deleting assignment: " . $e->getMessage());
-        }
     }
 }

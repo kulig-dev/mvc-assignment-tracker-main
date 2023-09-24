@@ -2,6 +2,9 @@
 namespace Newde\MvcAssignmentTracker\models;
 
 use \PDO;
+namespace Newde\MvcAssignmentTracker\models;
+
+use \PDO;
 
 /**
  * CourseDB class represents the data access layer for courses.
@@ -17,6 +20,7 @@ class CourseDB extends BaseModel {
      *
      * @return array An array of course data.
      * @throws \PDOException If there is an error during database query execution.
+     * @throws \PDOException If there is an error during database query execution.
      */
     public function getAllCourses() {
         try {
@@ -31,17 +35,24 @@ class CourseDB extends BaseModel {
 
     /**
      * Get a course by its ID.
+     * Get a course by its ID.
      *
      * @param int $courseID The ID of the course.
      * @return array|null An associative array representing the course, or null if not found.
      * @throws \PDOException If there is an error during database query execution.
+     * @return array|null An associative array representing the course, or null if not found.
+     * @throws \PDOException If there is an error during database query execution.
      */
+    public function getCourseByID($courseID) {
     public function getCourseByID($courseID) {
         try {
             $query = "SELECT * FROM courses WHERE courseID = :courseID";
             $stmt = $this->prepare($query);
             $stmt->bindParam(':courseID', $courseID, PDO::PARAM_INT);
             $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \Exception("Error fetching course: " . $e->getMessage());
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             throw new \Exception("Error fetching course: " . $e->getMessage());
@@ -54,6 +65,7 @@ class CourseDB extends BaseModel {
      * @param string $courseName The name of the course.
      * @return bool True on success, false on failure.
      * @throws \PDOException If there is an error during database query execution.
+     * @throws \PDOException If there is an error during database query execution.
      */
     public function addCourse($courseName) {
         try {
@@ -61,6 +73,8 @@ class CourseDB extends BaseModel {
             $stmt = $this->prepare($query);
             $stmt->bindParam(':courseName', $courseName);
             return $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new \Exception("Error adding course: " . $e->getMessage());
         } catch (\PDOException $e) {
             throw new \Exception("Error adding course: " . $e->getMessage());
         }
@@ -72,6 +86,7 @@ class CourseDB extends BaseModel {
      * @param int $courseID The ID of the course to delete.
      * @return bool True on success, false on failure.
      * @throws \PDOException If there is an error during database query execution.
+     * @throws \PDOException If there is an error during database query execution.
      */
     public function deleteCourse($courseID) {
         try {
@@ -79,6 +94,8 @@ class CourseDB extends BaseModel {
             $stmt = $this->prepare($query);
             $stmt->bindParam(':courseID', $courseID, PDO::PARAM_INT);
             return $stmt->execute();
+        } catch (\PDOException $e) {
+            throw new \Exception("Error deleting course: " . $e->getMessage());
         } catch (\PDOException $e) {
             throw new \Exception("Error deleting course: " . $e->getMessage());
         }
